@@ -27,6 +27,7 @@ fs.readFile(PATH, 'utf8', function(err,data){
 	}	
 });
 
+
 /* Esto solo para syncs */
 Q(fs.readFileSync(PATH, 'utf8'))
 .then(function(data){
@@ -44,7 +45,9 @@ Q(fs.readFileSync(PATH, 'utf8'))
 	console.error("$$$$ Q(fs.readFileSync()) - error: "+err);
 });
 
-var readFile = function (path) {
+
+/* Convierte una función asíncrona en promesa */
+var readFile = function (path, encoding) {
 	/* para funciones async
 	var deferred = Q.defer();
 	fs.readFile(path, "utf-8", function (error, text) {
@@ -58,21 +61,41 @@ var readFile = function (path) {
 	*/
 
 	/* Igual pero de manera más simple*/
-	return Q.nfcall(fs.readFile, path, "utf-8");
+	return Q.nfcall(fs.readFile, path, encoding);
 };
 
-readFile(PATH)
+readFile(PATH, "utf-8")
 .then(function(text){
 	console.log("@@@@ promise PATH - leído: "+text)
-	return readFile(PATH2);
+	return readFile(PATH2, "utf-8");
 })
 .then(function(text){
 	console.log("@@@@ promise PATH2 - leído: "+text)
-	return readFile(PATH3);
+	return readFile(PATH3, "utf-8");
 })
 .then(function(text){
 	console.log("@@@@ promise PATH3 - leído: "+text)
 })
 .fail(function(error){
 	console.error("@@@@ promise - error: " +error);
+});
+
+
+/* Convierte una función asíncrona en promesa - Usado con funciones con estilo Node.js callback err, result */
+var readFile2 = Q.nfbind(fs.readFile);
+	
+readFile2(PATH, "utf-8")
+.then(function(text){
+	console.log("---- promise PATH - leído: "+text)
+	return readFile2(PATH2, "utf-8");
+})
+.then(function(text){
+	console.log("---- promise PATH2 - leído: "+text)
+	return readFile2(PATH3, "utf-8");
+})
+.then(function(text){
+	console.log("---- promise PATH3 - leído: "+text)
+})
+.fail(function(error){
+	console.error("---- promise - error: " +error);
 });
