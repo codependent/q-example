@@ -87,3 +87,6 @@ var promise32 = promise3
 .then(function(text){
 	console.log("####>>>>323 promise PATH - leído: "+text)
 })
+.fail(function(err){
+	console.error("####>>>>32 GLOBAL "+err);
+})
